@@ -19,9 +19,12 @@ jobs:
       matrix:
         include:  # Inclure des variables supplémentaires
           - path: 'frontend'  # Lorsque le chemin est "frontend"
-            full_image_name: ghcr.io/${{ github.repository }}/frontend  # Nom complet de l'image pour "frontend"
+            full_image_name: ghcr.io/thiernomadioubah/github-action-cicd-projet2/frontend  # Nom complet de l'image pour "frontend"
+            # full_image_name: ghcr.io/${{ github.repository }}/frontend  # Nom complet de l'image pour "frontend"
           - path: 'node-api'  # Lorsque le chemin est "node-api"
-            full_image_name: ghcr.io/${{ github.repository }}/node-api  # Nom complet de l'image pour "node-api"
+            full_image_name: ghcr.io/thiernomadioubah/github-action-cicd-projet2/node-api  # Nom complet de l'image pour "node-api"
+            # full_image_name: ghcr.io/${{ github.repository }}/node-api  # Nom complet de l'image pour "node-api"
+
 
     # Étapes du job
     steps:
