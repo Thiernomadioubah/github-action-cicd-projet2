@@ -1,12 +1,17 @@
 # Nom du `workflow`
-name: Build et push des images Docker
+name: CI/CD workflow
 
 # Événements déclenchant le `workflow`
 on:
   push:  # Déclenche le `workflow` lors d'un `push`
     branches:  # Filtrer les branches
       - main  # Exécute sur la branche `main`
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  SERVER_USER: "root"
+  SERVER_PROD_IP: "54.37.11.162"
 # Liste des jobs
 jobs:
   tests_frontend:
@@ -121,3 +126,20 @@ jobs:
         run: docker compose up --exit-code-from cypress --abort-on-container-exit
       - name: Nettoyage
         run: docker compose down -v --remove-orphans
+  
+  deploy:
+    needs: ["e2e"]
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout le code
+      uses: actions/checkout@v4
+
+    - name: déployer sur le serveur
+      run: |
+        eval $(ssh-agent -s)
+        ssh-add - <<< "${{ secrets.VPS_KEY }}"
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ env.SERVER_PROD_IP }} >> ~/.ssh/known_hosts
+        scp docker-compose.prod.yml ${{ env.SERVER_USER }}@${{ env.SERVER_PROD_IP }}:/root/docker-compose.prod.yml
+        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_PROD_IP }} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} &&
+          docker compose -f /root/docker-compose.prod.yml up -d --force-recreate"
