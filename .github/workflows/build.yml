@@ -133,7 +133,7 @@ jobs:
     needs: ["build"]
     runs-on: ubuntu-latest
     environment: 
-      name: production
+      name: staging
       url: http://${{env.SERVER_STAGING_IP}}
     steps:
     - name: checkout le code
