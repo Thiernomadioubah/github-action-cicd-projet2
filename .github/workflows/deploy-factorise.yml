@@ -138,7 +138,7 @@ jobs:
           enviro: staging
     environment: 
       name: ${{matrix.enviro}}
-      url: http://${{env.ip-addr}}
+      url: http://${{matrix.ip-addr}}
     steps:
     - name: checkout le code
       uses: actions/checkout@v4
