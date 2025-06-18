@@ -131,6 +131,10 @@ jobs:
     # needs: ["e2e"]
     needs: ["build"]
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: 
+      name: production
+      url: http://${{env.SERVER_PROD_IP}}
     steps:
     - name: checkout le code
       uses: actions/checkout@v4
