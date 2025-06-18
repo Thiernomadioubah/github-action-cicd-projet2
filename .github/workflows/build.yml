@@ -138,19 +138,15 @@ jobs:
     steps:
     - name: checkout le code
       uses: actions/checkout@v4
-
-    - name: déployer sur le serveur
-      run: |
-        eval $(ssh-agent -s)
-        ssh-add - <<< "${{ secrets.VPS_KEY }}"
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ env.SERVER_STAGING_IP }} >> ~/.ssh/known_hosts
-        scp docker-compose.prod.yml ${{ env.SERVER_USER }}@${{ env.SERVER_STAGING_IP }}:/root/docker-compose.prod.yml
-        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_STAGING_IP }} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} &&
-          docker compose -f /root/docker-compose.prod.yml up -d --force-recreate"      
+    - name: déployer en staging
+      uses: ./.github/actions/deploy
+      with:
+        server_ip: ${{ env.SERVER_PROD_IP }}
+        secret_key: ${{ secrets.VPS_KEY }}
+        token_github: ${{ secrets.GITHUB_TOKEN }} 
   deploy-production:
     # needs: ["e2e"]
-    needs: ["build"]
+    needs: ["deploy-staging"]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: 
@@ -159,13 +155,9 @@ jobs:
     steps:
     - name: checkout le code
       uses: actions/checkout@v4
-
     - name: déployer sur le serveur
-      run: |
-        eval $(ssh-agent -s)
-        ssh-add - <<< "${{ secrets.VPS_KEY }}"
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ env.SERVER_PROD_IP }} >> ~/.ssh/known_hosts
-        scp docker-compose.prod.yml ${{ env.SERVER_USER }}@${{ env.SERVER_PROD_IP }}:/root/docker-compose.prod.yml
-        ssh ${{ env.SERVER_USER }}@${{ env.SERVER_PROD_IP }} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} &&
-          docker compose -f /root/docker-compose.prod.yml up -d --force-recreate"
+      uses: ./.github/actions/deploy
+      with:
+        server_ip: ${{ env.SERVER_PROD_IP }}
+        secret_key: ${{ secrets.VPS_KEY }}
+        token_github: ${{ secrets.GITHUB_TOKEN }}
