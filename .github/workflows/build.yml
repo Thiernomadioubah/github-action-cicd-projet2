@@ -150,7 +150,7 @@ jobs:
           docker compose -f /root/docker-compose.prod.yml up -d --force-recreate"      
   deploy-production:
     # needs: ["e2e"]
-    needs: ["deploy-staging"]
+    needs: ["build"]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: 
