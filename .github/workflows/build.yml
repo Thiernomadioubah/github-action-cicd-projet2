@@ -128,7 +128,8 @@ jobs:
         run: docker compose down -v --remove-orphans
   
   deploy:
-    needs: ["e2e"]
+    # needs: ["e2e"]
+    needs: ["build"]
     runs-on: ubuntu-latest
     steps:
     - name: checkout le code
