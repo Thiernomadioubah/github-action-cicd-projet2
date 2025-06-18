@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 env:
   SERVER_USER: "root"
-  SERVER_PROD_IP: "54.37.11.162"
+  SERVER_PROD_IP: "165.227.156.7"
 # Liste des jobs
 jobs:
   tests_frontend:
