@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-const { defineConfig } = require('cypress');
+const { defineConfig } = required('cypress');
 
 module.exports = defineConfig({
   e2e: {}
